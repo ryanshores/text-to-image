@@ -238,13 +238,10 @@
             border-radius: 10px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             padding: 40px;
-            min-width: 600px;
-            min-height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
         }
 
         .canvas-bg-options {
@@ -275,8 +272,11 @@
 
         #svg-output {
             width: 100%;
-            height: auto;
-            max-width: 100%;
+            height: 100%;
+        }
+
+        #svg-output svg {
+            display: block;
         }
 
         .dimensions-display {
@@ -498,7 +498,7 @@ NAME HERE</textarea>
                         <button class="bg-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-color="gradient" onclick="setBgColor('gradient')" aria-label="Gradient background"></button>
                         <button class="bg-btn" style="background: transparent; border: 2px dashed #ccc;" data-color="transparent" onclick="setBgColor('transparent')" aria-label="Transparent background"></button>
                     </div>
-                    <svg id="svg-output" xmlns="http://www.w3.org/2000/svg"></svg>
+                    <div id="svg-output"></div>
                     <div class="dimensions-display" id="dimensionsDisplay">600 × auto</div>
                 </div>
             </div>
@@ -674,8 +674,8 @@ NAME HERE</textarea>
             svg += `</g></svg>`;
             
             elements.svgOutput.innerHTML = svg;
-            elements.canvasWrapper.style.width = state.canvasWidth + 'px';
-            elements.canvasWrapper.style.height = state.canvasHeight + 'px';
+            elements.canvasWrapper.style.width = (state.canvasWidth + 80) + 'px';
+            elements.canvasWrapper.style.height = (state.canvasHeight + 80) + 'px';
 
             if (state.bgGradient) {
                 elements.canvasWrapper.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
