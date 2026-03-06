@@ -505,7 +505,7 @@ NAME HERE</textarea>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvOM9njaNeGf9WaxlKhFK7JyG0p17sXNP6JgwD9K5T9JiEgdH6gKEmD1PGTee1gdoxeW5D5KZ4R6IwW1kq0Aw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         // State
         const state = {
@@ -699,7 +699,8 @@ NAME HERE</textarea>
 
         function getSVGCode() {
             const serializer = new XMLSerializer();
-            return serializer.serializeToString(elements.svgOutput);
+            const svgElement = elements.svgOutput.querySelector('svg');
+            return serializer.serializeToString(svgElement);
         }
 
         function exportSVG() {
@@ -717,22 +718,42 @@ NAME HERE</textarea>
 
         function exportPDF() {
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({
-                orientation: state.canvasWidth > state.canvasHeight ? 'landscape' : 'portrait',
-                unit: 'px',
-                format: [state.canvasWidth, state.canvasHeight]
-            });
-            
             const svgCode = getSVGCode();
-            pdf.html(elements.svgOutput, {
-                callback: function(doc) {
-                    doc.save('brand-text.pdf');
-                },
-                x: 0,
-                y: 0,
-                width: state.canvasWidth,
-                height: state.canvasHeight
-            });
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+
+            canvas.width = state.canvasWidth;
+            canvas.height = state.canvasHeight;
+
+            const svgBlob = new Blob([svgCode], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            img.onload = function() {
+                if (state.transparent) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+                ctx.drawImage(img, 0, 0);
+
+                const pdf = new jsPDF({
+                    orientation: state.canvasWidth > state.canvasHeight ? 'landscape' : 'portrait',
+                    unit: 'px',
+                    format: [state.canvasWidth, state.canvasHeight]
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, state.canvasWidth, state.canvasHeight);
+                pdf.save('brand-text.pdf');
+
+                URL.revokeObjectURL(url);
+            };
+
+            img.onerror = function() {
+                alert('Failed to generate PDF. Please try again or use SVG export.');
+                URL.revokeObjectURL(url);
+            };
+
+            img.src = url;
         }
 
         function exportPNG() {
