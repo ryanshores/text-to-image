@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Text Creator - Brand Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Oswald:wght@200;300;400;500;600;700&family=Raleway:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Bebas+Neue&family=Lobster&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: calc(100vh - 200px);
+        }
+
+        .controls-panel {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select, input[type="number"], input[type="color"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="color"] {
+            height: 45px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .range-value {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .alignment-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .alignment-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .alignment-btn:hover {
+            border-color: #667eea;
+        }
+
+        .alignment-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .export-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .export-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .export-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+
+        .export-btn svg {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .export-svg {
+            background: #28a745;
+            color: white;
+        }
+
+        .export-svg:hover {
+            background: #218838;
+        }
+
+        .export-pdf {
+            background: #dc3545;
+            color: white;
+        }
+
+        .export-pdf:hover {
+            background: #c82333;
+        }
+
+        .export-png {
+            background: #007bff;
+            color: white;
+        }
+
+        .export-png:hover {
+            background: #0056b3;
+        }
+
+        .export-copy {
+            background: #6c757d;
+            color: white;
+        }
+
+        .export-copy:hover {
+            background: #5a6268;
+        }
+
+        .canvas-area {
+            padding: 40px;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .canvas-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            min-width: 600px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-bg-options {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .bg-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .bg-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .bg-btn.active {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        #svg-output {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+        }
+
+        .dimensions-display {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .presets-section {
+            margin-bottom: 20px;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-panel {
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .canvas-wrapper {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            text-transform: none;
+            font-weight: normal;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Vector Text Creator</h1>
+            <p>Create stunning brand images with customizable vector text</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="controls-panel">
+                <!-- Presets -->
+                <div class="presets-section control-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="loadPreset('elegant')">✨ Elegant</button>
+                        <button class="preset-btn" onclick="loadPreset('bold')">💪 Bold</button>
+                        <button class="preset-btn" onclick="loadPreset('modern')">🚀 Modern</button>
+                        <button class="preset-btn" onclick="loadPreset('minimal')">⚪ Minimal</button>
+                        <button class="preset-btn" onclick="loadPreset('playful')">🎈 Playful</button>
+                        <button class="preset-btn" onclick="loadPreset('vintage')">📻 Vintage</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Text Content</label>
+                    <textarea id="textInput" placeholder="Enter your text here...
+Use newlines for multiple lines">YOUR BRAND
+NAME HERE</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label>Font Family</label>
+                    <select id="fontFamily">
+                        <option value="Inter">Inter</option>
+                        <option value="Playfair Display">Playfair Display</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Oswald">Oswald</option>
+                        <option value="Raleway">Raleway</option>
+                        <option value="Poppins" selected>Poppins</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Bebas Neue">Bebas Neue</option>
+                        <option value="Lobster">Lobster</option>
+                        <option value="Pacifico">Pacifico</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Helvetica">Helvetica</option>
+                        <option value="Courier New">Courier New</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Font Weight</label>
+                    <select id="fontWeight">
+                        <option value="100">Thin (100)</option>
+                        <option value="200">Extra Light (200)</option>
+                        <option value="300">Light (300)</option>
+                        <option value="400" selected>Regular (400)</option>
+                        <option value="500">Medium (500)</option>
+                        <option value="600">Semi Bold (600)</option>
+                        <option value="700">Bold (700)</option>
+                        <option value="800">Extra Bold (800)</option>
+                        <option value="900">Black (900)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Font Size</label>
+                    <input type="range" id="fontSize" min="20" max="200" value="72">
+                    <div class="range-value" id="fontSizeValue">72px</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Line Height</label>
+                    <input type="range" id="lineHeight" min="1" max="3" step="0.1" value="1.2">
+                    <div class="range-value" id="lineHeightValue">1.2</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Letter Spacing</label>
+                    <input type="range" id="letterSpacing" min="-5" max="20" step="0.5" value="0">
+                    <div class="range-value" id="letterSpacingValue">0px</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Text Color</label>
+                    <input type="color" id="textColor" value="#333333">
+                </div>
+
+                <div class="control-group">
+                    <label>Text Alignment</label>
+                    <div class="alignment-buttons">
+                        <button class="alignment-btn" data-align="start" title="Left">⬅️</button>
+                        <button class="alignment-btn active" data-align="center" title="Center">➡️</button>
+                        <button class="alignment-btn" data-align="end" title="Right">➡️</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Canvas Width</label>
+                    <input type="range" id="canvasWidth" min="300" max="1200" value="600">
+                    <div class="range-value" id="canvasWidthValue">600px</div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="backgroundTransparent">
+                    <label for="backgroundTransparent">Transparent Background</label>
+                </div>
+
+                <div class="control-group" id="bgColorGroup">
+                    <label>Background Color</label>
+                    <input type="color" id="bgColor" value="#ffffff">
+                </div>
+
+                <div class="export-section">
+                    <h3>📥 Export Options</h3>
+                    <div class="export-buttons">
+                        <button class="export-btn export-svg" onclick="exportSVG()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            SVG
+                        </button>
+                        <button class="export-btn export-pdf" onclick="exportPDF()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            PDF
+                        </button>
+                        <button class="export-btn export-png" onclick="exportPNG()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            PNG
+                        </button>
+                        <button class="export-btn export-copy" onclick="copySVGCode()">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copy SVG
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-area">
+                <div class="canvas-wrapper" id="canvasWrapper">
+                    <div class="canvas-bg-options">
+                        <div class="bg-btn active" style="background: white;" data-color="#ffffff" onclick="setBgColor('#ffffff')"></div>
+                        <div class="bg-btn" style="background: #f5f5f5;" data-color="#f5f5f5" onclick="setBgColor('#f5f5f5')"></div>
+                        <div class="bg-btn" style="background: #1a1a1a;" data-color="#1a1a1a" onclick="setBgColor('#1a1a1a')"></div>
+                        <div class="bg-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-color="gradient" onclick="setBgColor('gradient')"></div>
+                        <div class="bg-btn" style="background: transparent; border: 2px dashed #ccc;" data-color="transparent" onclick="setBgColor('transparent')"></div>
+                    </div>
+                    <svg id="svg-output" xmlns="http://www.w3.org/2000/svg"></svg>
+                    <div class="dimensions-display" id="dimensionsDisplay">600 × auto</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // State
+        const state = {
+            text: "YOUR BRAND\nNAME HERE",
+            fontFamily: "Poppins",
+            fontWeight: "400",
+            fontSize: 72,
+            lineHeight: 1.2,
+            letterSpacing: 0,
+            textColor: "#333333",
+            textAlign: "center",
+            canvasWidth: 600,
+            canvasHeight: 400,
+            bgColor: "#ffffff",
+            transparent: false
+        };
+
+        // DOM Elements
+        const elements = {
+            textInput: document.getElementById('textInput'),
+            fontFamily: document.getElementById('fontFamily'),
+            fontWeight: document.getElementById('fontWeight'),
+            fontSize: document.getElementById('fontSize'),
+            fontSizeValue: document.getElementById('fontSizeValue'),
+            lineHeight: document.getElementById('lineHeight'),
+            lineHeightValue: document.getElementById('lineHeightValue'),
+            letterSpacing: document.getElementById('letterSpacing'),
+            letterSpacingValue: document.getElementById('letterSpacingValue'),
+            textColor: document.getElementById('textColor'),
+            alignmentBtns: document.querySelectorAll('.alignment-btn'),
+            canvasWidth: document.getElementById('canvasWidth'),
+            canvasWidthValue: document.getElementById('canvasWidthValue'),
+            bgColor: document.getElementById('bgColor'),
+            bgColorGroup: document.getElementById('bgColorGroup'),
+            transparentCheckbox: document.getElementById('backgroundTransparent'),
+            svgOutput: document.getElementById('svg-output'),
+            canvasWrapper: document.getElementById('canvasWrapper'),
+            dimensionsDisplay: document.getElementById('dimensionsDisplay')
+        };
+
+        // Initialize
+        function init() {
+            // Event listeners
+            elements.textInput.addEventListener('input', updateState);
+            elements.fontFamily.addEventListener('change', updateState);
+            elements.fontWeight.addEventListener('change', updateState);
+            elements.textColor.addEventListener('input', updateState);
+            elements.bgColor.addEventListener('input', updateState);
+            elements.transparentCheckbox.addEventListener('change', toggleTransparent);
+            
+            elements.fontSize.addEventListener('input', (e) => {
+                state.fontSize = parseInt(e.target.value);
+                elements.fontSizeValue.textContent = e.target.value + 'px';
+                render();
+            });
+            
+            elements.lineHeight.addEventListener('input', (e) => {
+                state.lineHeight = parseFloat(e.target.value);
+                elements.lineHeightValue.textContent = e.target.value;
+                render();
+            });
+            
+            elements.letterSpacing.addEventListener('input', (e) => {
+                state.letterSpacing = parseFloat(e.target.value);
+                elements.letterSpacingValue.textContent = e.target.value + 'px';
+                render();
+            });
+            
+            elements.canvasWidth.addEventListener('input', (e) => {
+                state.canvasWidth = parseInt(e.target.value);
+                elements.canvasWidthValue.textContent = e.target.value + 'px';
+                render();
+            });
+            
+            elements.alignmentBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    elements.alignmentBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.textAlign = btn.dataset.align;
+                    render();
+                });
+            });
+
+            // Initial render
+            render();
+        }
+
+        function updateState() {
+            state.text = elements.textInput.value;
+            state.fontFamily = elements.fontFamily.value;
+            state.fontWeight = elements.fontWeight.value;
+            state.textColor = elements.textColor.value;
+            if (!state.transparent) {
+                state.bgColor = elements.bgColor.value;
+            }
+            render();
+        }
+
+        function toggleTransparent(e) {
+            state.transparent = e.target.checked;
+            elements.bgColorGroup.style.display = state.transparent ? 'none' : 'block';
+            render();
+        }
+
+        function setBgColor(color) {
+            if (color === 'transparent') {
+                state.transparent = true;
+                elements.transparentCheckbox.checked = true;
+                elements.bgColorGroup.style.display = 'none';
+            } else {
+                state.transparent = false;
+                elements.transparentCheckbox.checked = false;
+                elements.bgColorGroup.style.display = 'block';
+                state.bgColor = color === 'gradient' ? '#667eea' : color;
+                elements.bgColor.value = state.bgColor;
+            }
+            
+            // Update button states
+            document.querySelectorAll('.bg-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.color === color) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            render();
+        }
+
+        function render() {
+            const lines = state.text.split('\n');
+            const padding = 60;
+            const lineHeightPx = state.fontSize * state.lineHeight;
+            const totalHeight = (lines.length * lineHeightPx) + (padding * 2);
+            
+            state.canvasHeight = Math.max(totalHeight, 300);
+            
+            // Build SVG
+            let svg = `<?xml version="1.0" encoding="UTF-8"?>`;
+            svg += `<svg xmlns="http://www.w3.org/2000/svg" width="${state.canvasWidth}" height="${state.canvasHeight}" viewBox="0 0 ${state.canvasWidth} ${state.canvasHeight}">`;
+            
+            // Background
+            if (!state.transparent) {
+                svg += `<rect width="100%" height="100%" fill="${state.bgColor}"/>`;
+            }
+            
+            // Text styles
+            const anchor = state.textAlign === 'start' ? 'start' : state.textAlign === 'end' ? 'end' : 'middle';
+            const x = state.textAlign === 'start' ? padding : state.textAlign === 'end' ? state.canvasWidth - padding : state.canvasWidth / 2;
+            
+            // Font face declaration
+            svg += `<defs><style>@import url('https://fonts.googleapis.com/css2?family=${state.fontFamily.replace(/\s/g, '+')}:wght@${state.fontWeight}');</style></defs>`;
+            
+            // Group for text
+            svg += `<g font-family="${state.fontFamily}, sans-serif" font-weight="${state.fontWeight}" font-size="${state.fontSize}" fill="${state.textColor}" text-anchor="${anchor}">`;
+            
+            lines.forEach((line, index) => {
+                const y = padding + (index + 0.8) * lineHeightPx;
+                const text = escapeXml(line);
+                const spacing = state.letterSpacing !== 0 ? ` letter-spacing="${state.letterSpacing}"` : '';
+                svg += `<text x="${x}" y="${y}"${spacing}>${text}</text>`;
+            });
+            
+            svg += `</g></svg>`;
+            
+            elements.svgOutput.innerHTML = svg;
+            elements.canvasWrapper.style.width = state.canvasWidth + 'px';
+            elements.canvasWrapper.style.height = state.canvasHeight + 'px';
+            
+            if (state.bgColor === 'gradient' || document.querySelector('.bg-btn[data-color="gradient"].active')) {
+                elements.canvasWrapper.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            } else if (state.transparent) {
+                elements.canvasWrapper.style.background = 'repeating-conic-gradient(#f0f0f0 0% 25%, transparent 0% 50%) 50% / 20px 20px';
+            } else {
+                elements.canvasWrapper.style.background = state.bgColor;
+            }
+            
+            elements.dimensionsDisplay.textContent = `${state.canvasWidth} × ${state.canvasHeight}`;
+        }
+
+        function escapeXml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        function getSVGCode() {
+            const serializer = new XMLSerializer();
+            return serializer.serializeToString(elements.svgOutput);
+        }
+
+        function exportSVG() {
+            const svgCode = getSVGCode();
+            const blob = new Blob([svgCode], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'brand-text.svg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: state.canvasWidth > state.canvasHeight ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [state.canvasWidth, state.canvasHeight]
+            });
+            
+            const svgCode = getSVGCode();
+            pdf.html(elements.svgOutput, {
+                callback: function(doc) {
+                    doc.save('brand-text.pdf');
+                },
+                x: 0,
+                y: 0,
+                width: state.canvasWidth,
+                height: state.canvasHeight
+            });
+        }
+
+        function exportPNG() {
+            const svgCode = getSVGCode();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            canvas.width = state.canvasWidth;
+            canvas.height = state.canvasHeight;
+            
+            const svgBlob = new Blob([svgCode], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = function() {
+                if (state.transparent) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+                ctx.drawImage(img, 0, 0);
+                
+                const pngUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = pngUrl;
+                link.download = 'brand-text.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+            
+            img.src = url;
+        }
+
+        function copySVGCode() {
+            const svgCode = getSVGCode();
+            navigator.clipboard.writeText(svgCode).then(() => {
+                alert('SVG code copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy. Check console for SVG code.');
+            });
+        }
+
+        function loadPreset(preset) {
+            const presets = {
+                elegant: {
+                    fontFamily: 'Playfair Display',
+                    fontWeight: '400',
+                    fontSize: 80,
+                    lineHeight: 1.3,
+                    letterSpacing: 2,
+                    textColor: '#2c3e50',
+                    textAlign: 'center'
+                },
+                bold: {
+                    fontFamily: 'Oswald',
+                    fontWeight: '700',
+                    fontSize: 100,
+                    lineHeight: 1.1,
+                    letterSpacing: 1,
+                    textColor: '#1a1a1a',
+                    textAlign: 'center'
+                },
+                modern: {
+                    fontFamily: 'Montserrat',
+                    fontWeight: '600',
+                    fontSize: 72,
+                    lineHeight: 1.2,
+                    letterSpacing: -1,
+                    textColor: '#667eea',
+                    textAlign: 'center'
+                },
+                minimal: {
+                    fontFamily: 'Inter',
+                    fontWeight: '300',
+                    fontSize: 64,
+                    lineHeight: 1.5,
+                    letterSpacing: 8,
+                    textColor: '#333333',
+                    textAlign: 'center'
+                },
+                playful: {
+                    fontFamily: 'Pacifico',
+                    fontWeight: '400',
+                    fontSize: 72,
+                    lineHeight: 1.4,
+                    letterSpacing: 0,
+                    textColor: '#e74c3c',
+                    textAlign: 'center'
+                },
+                vintage: {
+                    fontFamily: 'Georgia',
+                    fontWeight: '400',
+                    fontSize: 68,
+                    lineHeight: 1.3,
+                    letterSpacing: 3,
+                    textColor: '#8B4513',
+                    textAlign: 'center'
+                }
+            };
+            
+            const p = presets[preset];
+            if (p) {
+                elements.fontFamily.value = p.fontFamily;
+                elements.fontWeight.value = p.fontWeight;
+                elements.fontSize.value = p.fontSize;
+                elements.fontSizeValue.textContent = p.fontSize + 'px';
+                elements.lineHeight.value = p.lineHeight;
+                elements.lineHeightValue.textContent = p.lineHeight;
+                elements.letterSpacing.value = p.letterSpacing;
+                elements.letterSpacingValue.textContent = p.letterSpacing + 'px';
+                elements.textColor.value = p.textColor;
+                
+                // Update alignment
+                elements.alignmentBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.align === p.textAlign);
+                });
+                
+                state.textAlign = p.textAlign;
+                
+                Object.keys(p).forEach(key => {
+                    if (state.hasOwnProperty(key)) {
+                        state[key] = p[key];
+                    }
+                });
+                
+                render();
+            }
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
