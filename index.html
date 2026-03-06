@@ -444,9 +444,9 @@ NAME HERE</textarea>
                 <div class="control-group">
                     <label>Text Alignment</label>
                     <div class="alignment-buttons">
-                        <button class="alignment-btn" data-align="start" title="Left">⬅️</button>
-                        <button class="alignment-btn active" data-align="center" title="Center">➡️</button>
-                        <button class="alignment-btn" data-align="end" title="Right">➡️</button>
+                        <button class="alignment-btn" data-align="start" title="Left" aria-label="Align left">⬅️</button>
+                        <button class="alignment-btn active" data-align="center" title="Center" aria-label="Align center">⬌</button>
+                        <button class="alignment-btn" data-align="end" title="Right" aria-label="Align right">➡️</button>
                     </div>
                 </div>
 
@@ -492,11 +492,11 @@ NAME HERE</textarea>
             <div class="canvas-area">
                 <div class="canvas-wrapper" id="canvasWrapper">
                     <div class="canvas-bg-options">
-                        <div class="bg-btn active" style="background: white;" data-color="#ffffff" onclick="setBgColor('#ffffff')"></div>
-                        <div class="bg-btn" style="background: #f5f5f5;" data-color="#f5f5f5" onclick="setBgColor('#f5f5f5')"></div>
-                        <div class="bg-btn" style="background: #1a1a1a;" data-color="#1a1a1a" onclick="setBgColor('#1a1a1a')"></div>
-                        <div class="bg-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-color="gradient" onclick="setBgColor('gradient')"></div>
-                        <div class="bg-btn" style="background: transparent; border: 2px dashed #ccc;" data-color="transparent" onclick="setBgColor('transparent')"></div>
+                        <button class="bg-btn active" style="background: white;" data-color="#ffffff" onclick="setBgColor('#ffffff')" aria-label="White background"></button>
+                        <button class="bg-btn" style="background: #f5f5f5;" data-color="#f5f5f5" onclick="setBgColor('#f5f5f5')" aria-label="Light gray background"></button>
+                        <button class="bg-btn" style="background: #1a1a1a;" data-color="#1a1a1a" onclick="setBgColor('#1a1a1a')" aria-label="Dark background"></button>
+                        <button class="bg-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" data-color="gradient" onclick="setBgColor('gradient')" aria-label="Gradient background"></button>
+                        <button class="bg-btn" style="background: transparent; border: 2px dashed #ccc;" data-color="transparent" onclick="setBgColor('transparent')" aria-label="Transparent background"></button>
                     </div>
                     <svg id="svg-output" xmlns="http://www.w3.org/2000/svg"></svg>
                     <div class="dimensions-display" id="dimensionsDisplay">600 × auto</div>
@@ -505,7 +505,7 @@ NAME HERE</textarea>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvOM9njaNeGf9WaxlKhFK7JyG0p17sXNP6JgwD9K5T9JiEgdH6gKEmD1PGTee1gdoxeW5D5KZ4R6IwW1kq0Aw==" crossorigin="anonymous"></script>
     <script>
         // State
         const state = {
@@ -520,6 +520,7 @@ NAME HERE</textarea>
             canvasWidth: 600,
             canvasHeight: 400,
             bgColor: "#ffffff",
+            bgGradient: false,
             transparent: false
         };
 
@@ -613,16 +614,18 @@ NAME HERE</textarea>
         function setBgColor(color) {
             if (color === 'transparent') {
                 state.transparent = true;
+                state.bgGradient = false;
                 elements.transparentCheckbox.checked = true;
                 elements.bgColorGroup.style.display = 'none';
             } else {
                 state.transparent = false;
+                state.bgGradient = color === 'gradient';
                 elements.transparentCheckbox.checked = false;
                 elements.bgColorGroup.style.display = 'block';
                 state.bgColor = color === 'gradient' ? '#667eea' : color;
                 elements.bgColor.value = state.bgColor;
             }
-            
+
             // Update button states
             document.querySelectorAll('.bg-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -630,7 +633,7 @@ NAME HERE</textarea>
                     btn.classList.add('active');
                 }
             });
-            
+
             render();
         }
 
@@ -673,8 +676,8 @@ NAME HERE</textarea>
             elements.svgOutput.innerHTML = svg;
             elements.canvasWrapper.style.width = state.canvasWidth + 'px';
             elements.canvasWrapper.style.height = state.canvasHeight + 'px';
-            
-            if (state.bgColor === 'gradient' || document.querySelector('.bg-btn[data-color="gradient"].active')) {
+
+            if (state.bgGradient) {
                 elements.canvasWrapper.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             } else if (state.transparent) {
                 elements.canvasWrapper.style.background = 'repeating-conic-gradient(#f0f0f0 0% 25%, transparent 0% 50%) 50% / 20px 20px';
@@ -737,19 +740,19 @@ NAME HERE</textarea>
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             const img = new Image();
-            
+
             canvas.width = state.canvasWidth;
             canvas.height = state.canvasHeight;
-            
+
             const svgBlob = new Blob([svgCode], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(svgBlob);
-            
+
             img.onload = function() {
                 if (state.transparent) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                 }
                 ctx.drawImage(img, 0, 0);
-                
+
                 const pngUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.href = pngUrl;
@@ -759,7 +762,12 @@ NAME HERE</textarea>
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
             };
-            
+
+            img.onerror = function() {
+                alert('Failed to generate PNG. Please try again or use SVG export.');
+                URL.revokeObjectURL(url);
+            };
+
             img.src = url;
         }
 
